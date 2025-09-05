@@ -31,5 +31,8 @@ RUN mkdir -p /app/logs
 # Expor porta 8000
 EXPOSE 8000
 
-# Comando para iniciar o servidor Django
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Criar diretório para arquivos estáticos
+RUN mkdir -p /app/staticfiles
+
+# Comando para iniciar o servidor Django com Gunicorn
+CMD ["gunicorn", "daytrack_backend.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]

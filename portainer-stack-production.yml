@@ -1,0 +1,83 @@
+version: "3.7"
+
+services:
+  daytrack-frontend:
+    build:
+      context: https://github.com/Juniorsilvacmd/Daytrack.git
+      dockerfile: Dockerfile.frontend
+    networks:
+      - nioNet
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1024M
+        reservations:
+          cpus: "0.5"
+          memory: 512M
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.daytrack-frontend.rule=Host(`daytrack.niochat.com.br`)
+        - traefik.http.routers.daytrack-frontend.entrypoints=websecure
+        - traefik.http.routers.daytrack-frontend.tls.certresolver=letsencryptresolver
+        - traefik.http.routers.daytrack-frontend.service=daytrack-frontend
+        - traefik.http.services.daytrack-frontend.loadbalancer.server.port=3000
+        - traefik.http.services.daytrack-frontend.loadbalancer.passHostHeader=true
+        - traefik.http.services.daytrack-frontend.loadbalancer.healthcheck.path=/
+        - traefik.http.services.daytrack-frontend.loadbalancer.healthcheck.interval=10s
+        - traefik.http.services.daytrack-frontend.loadbalancer.healthcheck.timeout=5s
+    environment:
+      - VITE_API_URL=https://django.niochat.com.br/api/v1
+
+  daytrack-backend:
+    build:
+      context: https://github.com/Juniorsilvacmd/Daytrack.git
+      dockerfile: Dockerfile.backend
+    networks:
+      - nioNet
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: "2"
+          memory: 2048M
+        reservations:
+          cpus: "1"
+          memory: 1024M
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.daytrack-backend.rule=Host(`django.niochat.com.br`)
+        - traefik.http.routers.daytrack-backend.entrypoints=websecure
+        - traefik.http.routers.daytrack-backend.tls.certresolver=letsencryptresolver
+        - traefik.http.routers.daytrack-backend.service=daytrack-backend
+        - traefik.http.services.daytrack-backend.loadbalancer.server.port=8000
+        - traefik.http.services.daytrack-backend.loadbalancer.passHostHeader=true
+        - traefik.http.services.daytrack-backend.loadbalancer.healthcheck.path=/api/v1/
+        - traefik.http.services.daytrack-backend.loadbalancer.healthcheck.interval=10s
+        - traefik.http.services.daytrack-backend.loadbalancer.healthcheck.timeout=5s
+    environment:
+      - DEBUG=False
+      - SECRET_KEY=django-insecure-production-key-change-this-in-production
+      - ALLOWED_HOSTS=django.niochat.com.br,localhost,127.0.0.1
+      - DATABASE_URL=postgresql://postgres:Semfim01@@db.flojrapvlpueanbpvdab.supabase.co:5432/postgres
+      - CORS_ALLOWED_ORIGINS=https://daytrack.niochat.com.br
+    command: >
+      sh -c "
+      python manage.py migrate &&
+      python manage.py collectstatic --noinput &&
+      gunicorn daytrack_backend.wsgi:application --bind 0.0.0.0:8000 --workers 3
+      "
+
+networks:
+  nioNet:
+    external: true
+    name: nioNet
