@@ -1,0 +1,69 @@
+# Dependencies
+node_modules/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Database
+db.sqlite3
+*.db
+
+# Logs
+logs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+dist/
+build/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Old/Unused files
+authentication/
+backend/
+transactions/
+daytrack-setup.sql
+daytrack-simple.sql
+setup-supabase-sql.sql
+supabase-setup.sql
+update-supabase-sql.sql
+supabase_tables.sql
+GUIA_RAPIDO_SUPABASE.md
+SUPABASE_SETUP.md
+requirements-dev.txt
+install_supabase_deps.py
+env_example.txt
+clear_database.py
+create_admin.py
+create_missing_tables.py
+add-test-data.js
+check-policies.js
+check-transactions.js
+clear-localstorage.js
+
+# Django specific
+daytrack_backend/accounts/
+daytrack_backend/banking/
+daytrack_backend/logs/
+daytrack_backend/db.sqlite3
