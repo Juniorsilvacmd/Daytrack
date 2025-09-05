@@ -94,7 +94,7 @@ services:
       - ALLOWED_HOSTS=django.niochat.com.br,localhost,127.0.0.1
       - DATABASE_URL=postgresql://postgres:Semfim01@@db.flojrapvlpueanbpvdab.supabase.co:5432/postgres
       - CORS_ALLOWED_ORIGINS=https://daytrack.niochat.com.br
-    command: ["sh", "-c", "python -c \"import json; from http.server import HTTPServer, BaseHTTPRequestHandler; class APIHandler(BaseHTTPRequestHandler): def do_GET(self): self.send_response(200); self.send_header('Content-type', 'application/json'); self.send_header('Access-Control-Allow-Origin', '*'); self.end_headers(); self.wfile.write(json.dumps({'message': 'DayTrack API funcionando!', 'status': 'ok'}).encode()); server = HTTPServer(('0.0.0.0', 8000), APIHandler); server.serve_forever()\""]
+    command: ["python", "-m", "http.server", "8000"]
 
 networks:
   nioNet:
