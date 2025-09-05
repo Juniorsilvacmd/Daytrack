@@ -1,278 +1,215 @@
-# Daytrack Backend
+# DayTrack - Sistema de Gestão Financeira
 
-Backend completo em Django com Django REST Framework para o sistema de controle financeiro Daytrack.
+![DayTrack Logo](public/logo.png)
 
-## 🚀 Funcionalidades
+## 📋 Sobre o Projeto
 
-### ✅ Sistema de Autenticação Seguro
-- **Registro de usuários** com validação de dados
-- **Login com JWT** (access e refresh token)
-- **Logout** com invalidação do token
+O **DayTrack** é um sistema completo de gestão financeira desenvolvido para controle de banca e operações financeiras. O sistema oferece uma interface moderna, responsiva e intuitiva para acompanhar saldos, transações e relatórios financeiros.
+
+## ✨ Funcionalidades
+
+### 🔐 Autenticação Segura
+- **Login por username** com JWT (access e refresh token)
+- **Registro de usuários** com validação
+- **Logout** com invalidação de token
+- **2FA opcional** (Google Authenticator/TOTP)
 - **Reset de senha** via e-mail
-- **Senhas seguras** com validação do Django
-- **Suporte para 2FA** opcional (Google Authenticator/TOTP)
-- **Códigos de backup** para 2FA
-- **Log de tentativas de login** para segurança
 
-### ✅ Painel de Superadmin
-- **Django Admin** totalmente configurado
-- **Superadmin pode**:
-  - Criar, editar e remover usuários
-  - Ativar/desativar contas
-  - Definir se um usuário é admin ou não
-  - Visualizar logs de login
-  - Gerenciar transações e relatórios
+### 💰 Gestão Financeira
+- **Controle de saldo** atual da banca
+- **Registro de operações** (ganhos/perdas)
+- **Histórico completo** de transações
+- **Relatórios mensais** detalhados
+- **Dashboard** com estatísticas em tempo real
 
-### ✅ Isolamento de Dados
-- **Cada usuário** só pode acessar os próprios registros
-- **Superadmin** pode acessar dados de todos
-- **Permissions e queryset** filtrando dados por usuário logado
-- **Segurança total** de dados entre usuários
+### 📊 Visualizações
+- **Gráfico de evolução** da banca (barras + linha)
+- **Cards de estatísticas** (saldo, resultado diário, acumulado mensal, crescimento)
+- **Relatórios mensais** com análise detalhada
+- **Interface responsiva** para mobile e desktop
 
-### ✅ Sistema Financeiro Completo
-- **Conta bancária** por usuário
-- **Transações** (ganhos e perdas)
-- **Relatórios mensais** automáticos
-- **Estatísticas do dashboard** em tempo real
-- **Categorias e tags** para organização
-- **Cálculos automáticos** de saldo e crescimento
+### ⚙️ Configurações
+- **Edição de perfil** (nome, sobrenome, email)
+- **Alteração de senha**
+- **Tema escuro/claro**
+- **Configurações PWA** para instalação mobile
 
-## 🛠️ Tecnologias
+## 🛠️ Tecnologias Utilizadas
 
-- **Django 4.2.7** - Framework web
-- **Django REST Framework 3.14.0** - API REST
-- **JWT (SimpleJWT)** - Autenticação
-- **PostgreSQL/SQLite** - Banco de dados
-- **CORS Headers** - Cross-origin requests
-- **Django Filter** - Filtros avançados
-- **PyOTP** - 2FA com Google Authenticator
-- **QRCode** - Geração de QR codes para 2FA
+### Frontend
+- **React 18** com TypeScript
+- **Vite** para build e desenvolvimento
+- **Tailwind CSS** para estilização
+- **Recharts** para gráficos
+- **Lucide React** para ícones
+- **date-fns** para manipulação de datas
 
-## 📋 Pré-requisitos
+### Backend
+- **Django 4.2.7** com Django REST Framework
+- **JWT Authentication** (djangorestframework-simplejwt)
+- **PostgreSQL** (Supabase)
+- **CORS** para comunicação frontend/backend
+- **Django Admin** para superadmin
 
+### Banco de Dados
+- **Supabase PostgreSQL** para produção
+- **SQLite** para desenvolvimento local
+
+## 🚀 Instalação e Configuração
+
+### Pré-requisitos
+- Node.js 18+
 - Python 3.8+
-- pip
-- PostgreSQL (opcional, SQLite para desenvolvimento)
+- Git
 
-## 🚀 Instalação
+### Frontend (React)
 
-1. **Clone o repositório**:
 ```bash
-git clone <repository-url>
+# Clone o repositório
+git clone https://github.com/Juniorsilvacmd/Daytrack.git
+cd Daytrack
+
+# Instale as dependências
+npm install
+
+# Inicie o servidor de desenvolvimento
+npm run dev
+```
+
+### Backend (Django)
+
+```bash
+# Navegue para o diretório do backend
 cd daytrack_backend
-```
 
-2. **Crie um ambiente virtual**:
-```bash
+# Crie um ambiente virtual
 python -m venv venv
-venv\Scripts\activate  # Windows
-# ou
-source venv/bin/activate  # Linux/Mac
-```
 
-3. **Instale as dependências**:
-```bash
-pip install -r requirements-dev.txt
-```
+# Ative o ambiente virtual
+# Windows
+venv\Scripts\activate
+# Linux/Mac
+source venv/bin/activate
 
-4. **Configure as variáveis de ambiente**:
-```bash
-# Copie o arquivo de exemplo
-cp .env.example .env
-# Edite o arquivo .env com suas configurações
-```
+# Instale as dependências
+pip install -r requirements.txt
 
-5. **Execute as migrações**:
-```bash
+# Execute as migrações
 python manage.py migrate
-```
 
-6. **Crie um superusuário**:
-```bash
+# Crie um superusuário
 python manage.py createsuperuser
-```
 
-7. **Inicie o servidor**:
-```bash
+# Inicie o servidor
 python manage.py runserver
 ```
 
-## 🔧 Configuração
+## 🔧 Configuração do Supabase
 
-### Variáveis de Ambiente (.env)
+1. **Crie uma conta** no [Supabase](https://supabase.com)
+2. **Crie um novo projeto**
+3. **Configure as credenciais** no arquivo `daytrack_backend/daytrack_backend/settings.py`:
 
-```env
-# Django Settings
-SECRET_KEY=sua-secret-key-aqui
-DEBUG=True
-ALLOWED_HOSTS=localhost,127.0.0.1
-
-# Database
-DATABASE_URL=sqlite:///db.sqlite3
-
-# Email Settings (para reset de senha)
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
-EMAIL_USE_TLS=True
-EMAIL_HOST_USER=seu-email@gmail.com
-EMAIL_HOST_PASSWORD=sua-senha-de-app
-DEFAULT_FROM_EMAIL=noreply@daytrack.com
-
-# Supabase (para produção)
-SUPABASE_URL=sua-url-supabase
-SUPABASE_KEY=sua-chave-supabase
+```python
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'sua_senha',
+        'HOST': 'db.seuprojeto.supabase.co',
+        'PORT': '5432',
+        'OPTIONS': {
+            'sslmode': 'require',
+        },
+    }
+}
 ```
 
-## 📚 Endpoints da API
-
-### Autenticação (`/api/v1/auth/`)
-
-- `POST /register/` - Registro de usuário
-- `POST /login/` - Login com JWT
-- `POST /logout/` - Logout (invalida token)
-- `GET /profile/` - Perfil do usuário
-- `PUT /profile/` - Atualizar perfil
-- `POST /change-password/` - Alterar senha
-- `POST /password-reset/` - Solicitar reset de senha
-- `POST /password-reset-confirm/` - Confirmar reset de senha
-- `GET /2fa/setup/` - Configurar 2FA (QR code)
-- `POST /2fa/setup/` - Confirmar configuração 2FA
-- `POST /2fa/disable/` - Desabilitar 2FA
-- `GET /login-attempts/` - Histórico de logins
-- `GET /stats/` - Estatísticas do usuário
-
-### Transações (`/api/v1/`)
-
-- `GET /bank-account/` - Conta bancária do usuário
-- `PUT /bank-account/` - Atualizar saldo da conta
-- `GET /bank-account/summary/` - Resumo da conta
-- `GET /transactions/` - Listar transações
-- `POST /transactions/` - Criar transação
-- `GET /transactions/{id}/` - Detalhes da transação
-- `PUT /transactions/{id}/` - Atualizar transação
-- `DELETE /transactions/{id}/` - Deletar transação
-- `GET /transactions/summary/` - Resumo por período
-- `GET /monthly-reports/` - Relatórios mensais
-- `POST /monthly-reports/generate/` - Gerar relatório mensal
-- `GET /dashboard-stats/` - Estatísticas do dashboard
-- `GET /categories/` - Categorias de transações
-- `POST /categories/` - Criar categoria
-- `GET /tags/` - Tags de transações
-- `POST /tags/` - Criar tag
-
-## 🔐 Segurança
-
-### Autenticação JWT
-- **Access Token**: 60 minutos
-- **Refresh Token**: 7 dias
-- **Rotação automática** de tokens
-- **Blacklist** de tokens inválidos
-
-### 2FA (Two-Factor Authentication)
-- **Google Authenticator** compatível
-- **TOTP** (Time-based One-Time Password)
-- **Códigos de backup** para emergências
-- **QR Code** para configuração fácil
-
-### Isolamento de Dados
-- **Row Level Security** por usuário
-- **Filtros automáticos** em todas as queries
-- **Permissões granulares** por endpoint
-- **Logs de auditoria** para todas as ações
-
-## 👨‍💼 Painel Admin
-
-Acesse `/admin/` para gerenciar:
-
-- **Usuários**: Criar, editar, ativar/desativar
-- **Contas Bancárias**: Visualizar saldos
-- **Transações**: Monitorar todas as operações
-- **Relatórios**: Análise mensal
-- **Logs de Login**: Segurança e auditoria
-- **Categorias e Tags**: Organização
-
-## 🧪 Testes
-
+4. **Execute as migrações** no Supabase:
 ```bash
-# Executar testes
-python manage.py test
-
-# Testes específicos
-python manage.py test authentication
-python manage.py test transactions
+python manage.py migrate
 ```
 
-## 📊 Monitoramento
+## 📱 PWA (Progressive Web App)
 
-- **Logs**: `logs/django.log`
-- **Health Check**: `/health/`
-- **Admin**: `/admin/`
+O DayTrack é uma PWA completa, permitindo:
+- **Instalação** em dispositivos móveis
+- **Funcionamento offline** (com cache)
+- **Notificações** push (futuro)
+- **Experiência nativa** em mobile
+
+### Instalação Mobile
+1. Acesse `https://seudominio.com` no mobile
+2. Toque em "Adicionar à tela inicial"
+3. Use como app nativo
+
+## 🎨 Interface
+
+### Tema Escuro
+- Interface moderna com tema escuro por padrão
+- Alternância entre tema claro/escuro
+- Cores consistentes em toda aplicação
+
+### Responsividade
+- **Mobile-first** design
+- **Adaptação automática** para diferentes telas
+- **Touch-friendly** para dispositivos móveis
+
+## 🔒 Segurança
+
+- **Autenticação JWT** com refresh tokens
+- **Senhas criptografadas** com bcrypt
+- **CORS configurado** para produção
+- **Validação de dados** no frontend e backend
+- **Isolamento de dados** por usuário
+
+## 📊 Estrutura do Projeto
+
+```
+Daytrack/
+├── src/                    # Frontend React
+│   ├── components/         # Componentes React
+│   ├── services/           # Serviços de API
+│   ├── hooks/              # Custom hooks
+│   ├── utils/              # Utilitários
+│   └── types/              # Tipos TypeScript
+├── daytrack_backend/        # Backend Django
+│   ├── authentication/     # App de autenticação
+│   ├── transactions/       # App de transações
+│   └── daytrack_backend/   # Configurações Django
+├── public/                 # Arquivos públicos
+└── requirements.txt        # Dependências Python
+```
 
 ## 🚀 Deploy
 
-### Produção com PostgreSQL
-
-1. **Configure PostgreSQL**:
-```env
-DATABASE_URL=postgresql://user:password@localhost:5432/daytrack
-```
-
-2. **Instale psycopg2**:
+### Frontend (Vercel/Netlify)
 ```bash
-pip install psycopg2-binary
+npm run build
+# Upload da pasta dist/
 ```
 
-3. **Configure variáveis de produção**:
-```env
-DEBUG=False
-SECRET_KEY=sua-secret-key-super-secreta
-ALLOWED_HOSTS=seu-dominio.com
-```
-
-4. **Execute migrações**:
+### Backend (Railway/Heroku)
 ```bash
-python manage.py migrate
-python manage.py collectstatic
+# Configure as variáveis de ambiente
+# Deploy automático via Git
 ```
 
-## 📝 Exemplos de Uso
+## 📝 API Endpoints
 
-### Registro de Usuário
-```bash
-curl -X POST http://localhost:8000/api/v1/auth/register/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "username": "usuario",
-    "email": "usuario@email.com",
-    "first_name": "João",
-    "last_name": "Silva",
-    "password": "senha123",
-    "password_confirm": "senha123"
-  }'
-```
+### Autenticação
+- `POST /api/v1/auth/register/` - Registro de usuário
+- `POST /api/v1/auth/login/` - Login
+- `POST /api/v1/auth/logout/` - Logout
+- `POST /api/v1/auth/token/refresh/` - Refresh token
 
-### Login
-```bash
-curl -X POST http://localhost:8000/api/v1/auth/login/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "usuario@email.com",
-    "password": "senha123"
-  }'
-```
-
-### Criar Transação
-```bash
-curl -X POST http://localhost:8000/api/v1/transactions/ \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer SEU_ACCESS_TOKEN" \
-  -d '{
-    "type": "gain",
-    "amount": "100.00",
-    "description": "Venda de produto",
-    "date": "2025-01-05"
-  }'
-```
+### Transações
+- `GET /api/v1/bank-accounts/` - Listar contas
+- `POST /api/v1/bank-accounts/` - Criar conta
+- `GET /api/v1/transactions/` - Listar transações
+- `POST /api/v1/transactions/` - Criar transação
+- `DELETE /api/v1/transactions/{id}/` - Deletar transação
 
 ## 🤝 Contribuição
 
@@ -286,12 +223,22 @@ curl -X POST http://localhost:8000/api/v1/transactions/ \
 
 Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
 
-## 📞 Suporte
+## 👨‍💻 Desenvolvedor
 
-- **Email**: contato@daytrack.com
-- **Documentação**: `/swagger/` (quando disponível)
-- **Issues**: GitHub Issues
+**Junior Silva**
+- Email: juniorsousacmd@gmail.com
+- GitHub: [@Juniorsilvacmd](https://github.com/Juniorsilvacmd)
+
+## 🎯 Roadmap
+
+- [ ] **Notificações push** para operações
+- [ ] **Relatórios em PDF** para exportação
+- [ ] **Múltiplas contas** por usuário
+- [ ] **Categorização** de transações
+- [ ] **Metas financeiras** e alertas
+- [ ] **Integração** com APIs de criptomoedas
+- [ ] **Backup automático** de dados
 
 ---
 
-**Daytrack Backend** - Sistema completo de controle financeiro com segurança máxima! 🚀💰
+**© 2025 DayTrack. Versão 1.0.0**
