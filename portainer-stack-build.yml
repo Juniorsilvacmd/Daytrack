@@ -2,7 +2,9 @@ version: "3.7"
 
 services:
   daytrack-frontend:
-    image: juniorsilvacmd/daytrack-frontend:latest
+    build:
+      context: https://github.com/Juniorsilvacmd/Daytrack.git
+      dockerfile: Dockerfile.frontend
     networks:
       - nioNet
     deploy:
@@ -37,7 +39,9 @@ services:
         - traefik.http.routers.daytrack-frontend.middlewares=daytrack-security-headers
 
   daytrack-backend:
-    image: juniorsilvacmd/daytrack-backend:latest
+    build:
+      context: https://github.com/Juniorsilvacmd/Daytrack.git
+      dockerfile: Dockerfile.backend
     networks:
       - nioNet
     deploy:
