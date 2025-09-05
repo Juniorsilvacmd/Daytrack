@@ -104,7 +104,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onRegisterSuccess, o
                       required
                       value={formData.first_name}
                       onChange={handleInputChange}
-                      className="pl-10 bg-gray-600 border-gray-500 text-white placeholder-gray-300 focus:border-blue-500 focus:ring-blue-500 h-12"
+                      className="pl-10 pr-8 bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500 h-12 rounded-full"
                       placeholder="Nome"
                     />
                   </div>
@@ -122,7 +122,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onRegisterSuccess, o
                       required
                       value={formData.last_name}
                       onChange={handleInputChange}
-                      className="pl-10 bg-gray-600 border-gray-500 text-white placeholder-gray-300 focus:border-blue-500 focus:ring-blue-500 h-12"
+                      className="pl-10 pr-8 bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500 h-12 rounded-full"
                       placeholder="Sobrenome"
                     />
                   </div>
@@ -141,7 +141,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onRegisterSuccess, o
                     required
                     value={formData.username}
                     onChange={handleInputChange}
-                    className="pl-10 bg-gray-600 border-gray-500 text-white placeholder-gray-300 focus:border-blue-500 focus:ring-blue-500 h-12"
+                    className="pl-10 pr-8 bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500 h-12 rounded-full"
                     placeholder="Nome de usuário"
                   />
                 </div>
@@ -159,7 +159,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onRegisterSuccess, o
                     required
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="pl-10 bg-gray-600 border-gray-500 text-white placeholder-gray-300 focus:border-blue-500 focus:ring-blue-500 h-12"
+                    className="pl-10 pr-8 bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500 h-12 rounded-full"
                     placeholder="E-mail"
                   />
                 </div>
@@ -177,18 +177,18 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onRegisterSuccess, o
                     required
                     value={formData.password}
                     onChange={handleInputChange}
-                    className="pl-10 pr-10 bg-gray-600 border-gray-500 text-white placeholder-gray-300 focus:border-blue-500 focus:ring-blue-500 h-12"
+                    className="pl-10 pr-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500 h-12 rounded-full"
                     placeholder="Senha"
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    className="absolute inset-y-0 right-0 pr-8 flex items-center justify-center"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400" />
+                      <EyeOff className="h-4 w-4 text-gray-400 hover:text-gray-300" />
                     ) : (
-                      <Eye className="h-5 w-5 text-gray-400" />
+                      <Eye className="h-4 w-4 text-gray-400 hover:text-gray-300" />
                     )}
                   </button>
                 </div>
@@ -206,18 +206,18 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onRegisterSuccess, o
                     required
                     value={formData.password_confirm}
                     onChange={handleInputChange}
-                    className="pl-10 pr-10 bg-gray-600 border-gray-500 text-white placeholder-gray-300 focus:border-blue-500 focus:ring-blue-500 h-12"
+                    className="pl-10 pr-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500 h-12 rounded-full"
                     placeholder="Confirmar senha"
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    className="absolute inset-y-0 right-0 pr-8 flex items-center justify-center"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400" />
+                      <EyeOff className="h-4 w-4 text-gray-400 hover:text-gray-300" />
                     ) : (
-                      <Eye className="h-5 w-5 text-gray-400" />
+                      <Eye className="h-4 w-4 text-gray-400 hover:text-gray-300" />
                     )}
                   </button>
                 </div>

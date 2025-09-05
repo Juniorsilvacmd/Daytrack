@@ -10,7 +10,10 @@ export const Input: React.FC<InputProps> = ({
   className = '',
   ...props
 }) => {
-  const defaultClasses = "w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400";
+  const defaultClasses = "w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400";
+  
+  // Se className customizada for fornecida, usar apenas ela (sem mesclar com defaultClasses)
+  const finalClasses = className.trim() ? className : defaultClasses;
   
   return (
     <div className="w-full">
@@ -21,7 +24,7 @@ export const Input: React.FC<InputProps> = ({
       )}
       <input
         {...props}
-        className={`${defaultClasses} ${className}`}
+        className={finalClasses}
       />
     </div>
   );

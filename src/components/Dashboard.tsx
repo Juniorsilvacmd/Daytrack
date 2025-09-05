@@ -39,7 +39,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, chartData }) => {
   return (
     <div className="space-y-6">
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <StatsCard
           title="Saldo Atual"
           value={formatCurrency(stats.currentBalance)}

@@ -12,6 +12,14 @@ export const useBankData = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
+        // Verificar se há token de autenticação
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+          console.log('Nenhum token de autenticação encontrado');
+          setIsLoading(false);
+          return;
+        }
+
         const [account, transactionsList] = await Promise.all([
           djangoBankService.getBankAccount(),
           djangoBankService.getTransactions()
@@ -36,7 +44,6 @@ export const useBankData = () => {
         console.error('Erro ao carregar dados:', error);
       } finally {
         setIsLoading(false);
-
       }
     };
 
