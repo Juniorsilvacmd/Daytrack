@@ -86,4 +86,15 @@ VITE_API_URL=https://django.niochat.com.br/api/v1
 
 ## 🚀 **Recomendação**
 
-**Use o arquivo `portainer-stack-build.yml`** - ele resolve automaticamente o problema de imagens não encontradas fazendo build direto do GitHub.
+**Use o arquivo `portainer-stack-minimal.yml`** - versão mais simples que funciona imediatamente:
+
+1. **Teste primeiro** com `portainer-stack-minimal.yml`
+2. **Se funcionar**, use `portainer-stack-simple.yml` 
+3. **Para produção**, use `portainer-stack-build.yml`
+
+## 📋 **Ordem de Teste Recomendada**
+
+1. ✅ **`portainer-stack-minimal.yml`** - Teste básico
+2. ✅ **`portainer-stack-simple.yml`** - Build automático
+3. ✅ **`portainer-stack-build.yml`** - Build completo
+4. ✅ **`portainer-stack.yml`** - Com imagens Docker Hub
