@@ -61,7 +61,7 @@ services:
         - traefik.http.routers.daytrack-backend.service=daytrack-backend
         - traefik.http.services.daytrack-backend.loadbalancer.server.port=8000
         - traefik.http.services.daytrack-backend.loadbalancer.passHostHeader=true
-        - traefik.http.services.daytrack-backend.loadbalancer.healthcheck.path=/api/v1/
+        - traefik.http.services.daytrack-backend.loadbalancer.healthcheck.path=/admin/
         - traefik.http.services.daytrack-backend.loadbalancer.healthcheck.interval=10s
         - traefik.http.services.daytrack-backend.loadbalancer.healthcheck.timeout=5s
     environment:
@@ -75,12 +75,17 @@ services:
     working_dir: /app
     command: >
       sh -c "
+      echo '=== INICIANDO BACKEND DAYTRACK ===' &&
       echo 'Instalando dependências...' &&
       pip install -r requirements.txt &&
+      echo 'Verificando estrutura do projeto...' &&
+      ls -la &&
       echo 'Executando migrações...' &&
       python manage.py migrate &&
       echo 'Coletando arquivos estáticos...' &&
       python manage.py collectstatic --noinput &&
+      echo 'Testando configuração...' &&
+      python manage.py check &&
       echo 'Iniciando Gunicorn...' &&
       gunicorn --bind 0.0.0.0:8000 --workers 3 --timeout 120 --access-logfile - --error-logfile - daytrack_backend.wsgi:application
       "
