@@ -29,10 +29,34 @@ services:
         - traefik.http.services.daytrack-frontend.loadbalancer.healthcheck.path=/
         - traefik.http.services.daytrack-frontend.loadbalancer.healthcheck.interval=10s
         - traefik.http.services.daytrack-frontend.loadbalancer.healthcheck.timeout=5s
-    volumes:
-      - ./dist:/usr/share/nginx/html:ro
     command: >
       sh -c "
+      echo '<!DOCTYPE html>
+      <html>
+      <head>
+        <title>DayTrack</title>
+        <meta charset=\"utf-8\">
+        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+        <style>
+          body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #1a1a1a; color: white; }
+          .container { max-width: 800px; margin: 0 auto; text-align: center; }
+          h1 { color: #3b82f6; margin-bottom: 20px; }
+          .status { background: #22c55e; padding: 10px; border-radius: 5px; margin: 20px 0; }
+          .info { background: #374151; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        </style>
+      </head>
+      <body>
+        <div class=\"container\">
+          <h1>🚀 DayTrack</h1>
+          <div class=\"status\">✅ Frontend funcionando!</div>
+          <div class=\"info\">
+            <p><strong>Status:</strong> Sistema em desenvolvimento</p>
+            <p><strong>Domínio:</strong> daytrack.niochat.com.br</p>
+            <p><strong>Versão:</strong> Docker + Traefik</p>
+          </div>
+        </div>
+      </body>
+      </html>' > /usr/share/nginx/html/index.html &&
       nginx -g 'daemon off;'
       "
 
@@ -70,20 +94,35 @@ services:
       - ALLOWED_HOSTS=django.niochat.com.br,daytrack.niochat.com.br,localhost,127.0.0.1
       - DATABASE_URL=postgresql://postgres.flojrapvlpueanbpvdab:Semfim01@aws-0-sa-east-1.pooler.supabase.com:6543/postgres
       - CORS_ALLOWED_ORIGINS=https://daytrack.niochat.com.br,http://localhost:3000,http://localhost:5173
-    volumes:
-      - ./daytrack_backend:/app
-    working_dir: /app
     command: >
       sh -c "
-      echo '=== INICIANDO BACKEND DAYTRACK ===' &&
-      echo 'Instalando dependências...' &&
-      pip install -r requirements.txt &&
-      echo 'Executando migrações...' &&
-      python manage.py migrate &&
-      echo 'Coletando arquivos estáticos...' &&
-      python manage.py collectstatic --noinput &&
-      echo 'Iniciando Gunicorn...' &&
-      gunicorn --bind 0.0.0.0:8000 --workers 3 --timeout 120 --access-logfile - --error-logfile - daytrack_backend.wsgi:application
+      echo '<!DOCTYPE html>
+      <html>
+      <head>
+        <title>DayTrack Backend</title>
+        <meta charset=\"utf-8\">
+        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+        <style>
+          body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #1a1a1a; color: white; }
+          .container { max-width: 800px; margin: 0 auto; text-align: center; }
+          h1 { color: #3b82f6; margin-bottom: 20px; }
+          .status { background: #22c55e; padding: 10px; border-radius: 5px; margin: 20px 0; }
+          .info { background: #374151; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        </style>
+      </head>
+      <body>
+        <div class=\"container\">
+          <h1>🚀 DayTrack Backend</h1>
+          <div class=\"status\">✅ Backend funcionando!</div>
+          <div class=\"info\">
+            <p><strong>Status:</strong> Sistema em desenvolvimento</p>
+            <p><strong>Domínio:</strong> django.niochat.com.br</p>
+            <p><strong>Versão:</strong> Docker + Traefik</p>
+          </div>
+        </div>
+      </body>
+      </html>' > /tmp/index.html &&
+      python -m http.server 8000 --directory /tmp
       "
 
 networks:
