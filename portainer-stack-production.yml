@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   daytrack-frontend:
-    image: nginx:alpine
+    image: juniorsilvacmd/daytrack-frontend:latest
     networks:
       - nioNet
     deploy:
@@ -61,7 +61,7 @@ services:
       "
 
   daytrack-backend:
-    image: python:3.11-slim
+    image: juniorsilvacmd/daytrack-backend:latest
     networks:
       - nioNet
     deploy:
