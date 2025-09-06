@@ -10,7 +10,7 @@ services:
     environment:
       - NODE_ENV=production
     networks:
-      - daytrack-network
+      - nioNet
 
   backend:
     build:
@@ -22,8 +22,9 @@ services:
       - DEBUG=False
       - ALLOWED_HOSTS=localhost,127.0.0.1,django.niochat.com.br
     networks:
-      - daytrack-network
+      - nioNet
 
 networks:
-  daytrack-network:
-    driver: bridge
+  nioNet:
+    external: true
+    name: nioNet
