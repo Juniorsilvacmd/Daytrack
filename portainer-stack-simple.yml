@@ -3,7 +3,6 @@ version: '3.8'
 services:
   daytrack-frontend:
     image: nginx:alpine
-    container_name: daytrack-frontend
     restart: unless-stopped
     environment:
       - NGINX_HOST=daytrack.niochat.com.br
@@ -11,7 +10,7 @@ services:
     volumes:
       - ./dist:/usr/share/nginx/html:ro
     networks:
-      - traefik
+      - daytrack-network
     labels:
       - traefik.enable=true
       - traefik.http.routers.daytrack-frontend.rule=Host(`daytrack.niochat.com.br`)
@@ -25,7 +24,6 @@ services:
 
   daytrack-backend:
     image: python:3.11-slim
-    container_name: daytrack-backend
     restart: unless-stopped
     working_dir: /app
     environment:
@@ -44,7 +42,7 @@ services:
         gunicorn --bind 0.0.0.0:8000 --workers 3 --timeout 120 daytrack_backend.wsgi:application
       "
     networks:
-      - traefik
+      - daytrack-network
     labels:
       - traefik.enable=true
       - traefik.http.routers.daytrack-backend.rule=Host(`django.niochat.com.br`)
@@ -55,6 +53,6 @@ services:
       - traefik.http.routers.daytrack-backend.middlewares=daytrack-backend-headers
 
 networks:
-  traefik:
+  daytrack-network:
     driver: overlay
     attachable: true
