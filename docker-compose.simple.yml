@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  daytrack_web:
+    image: juniorsilvacmd/daytrack:latest
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=False
+      - SECRET_KEY=${SECRET_KEY}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - DATABASE_URL=${DATABASE_URL}
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
+    restart: unless-stopped
