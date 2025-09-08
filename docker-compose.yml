@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   daytrack_web:
-    build: .
+    image: juniorsilvacmd/daytrack:latest
     networks:
       - nioNet
     environment:
