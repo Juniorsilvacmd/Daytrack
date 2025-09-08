@@ -3,7 +3,8 @@
 ## 📁 Arquivos Essenciais
 
 - **Dockerfile**: Build do Django com gunicorn
-- **docker-compose.yml**: Stack completa para Portainer
+- **docker-compose.portainer.yml**: Stack específica para Portainer
+- **docker-compose.yml**: Stack para desenvolvimento local
 
 ## 🚀 Deploy no Portainer
 
@@ -14,8 +15,14 @@
 3. **Configure:**
    - Repository URL: `https://github.com/Juniorsilvacmd/Daytrack.git`
    - Repository reference: `refs/heads/main`
-   - Compose file path: `docker-compose.yml`
-4. **Deploy!**
+   - Compose file path: `docker-compose.portainer.yml`
+4. **Configure as variáveis de ambiente:**
+   - `SECRET_KEY`: Chave secreta do Django
+   - `DATABASE_URL`: URL de conexão com o banco de dados
+   - `ALLOWED_HOSTS`: Lista de hosts permitidos
+   - `CORS_ALLOWED_ORIGINS`: Lista de origens CORS permitidas
+   - `DOMAIN_NAME`: Nome de domínio para o Traefik
+5. **Deploy!**
 
 ## 🌐 URL
 
