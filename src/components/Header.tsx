@@ -19,6 +19,8 @@ interface User {
   first_name: string;
   last_name: string;
   is_active: boolean;
+  is_staff?: boolean;
+  is_superuser?: boolean;
   two_factor_enabled: boolean;
 }
 
@@ -54,6 +56,7 @@ export const Header: React.FC<HeaderProps> = ({
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
     { id: 'history', label: 'Histórico', icon: History },
     { id: 'reports', label: 'Relatórios', icon: Calendar },
+    ...(user && user.is_superuser ? [{ id: 'admin', label: 'Admin', icon: BarChart3 }] : []),
   ];
 
   return (

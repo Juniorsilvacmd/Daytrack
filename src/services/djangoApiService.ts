@@ -1,6 +1,26 @@
 import { Transaction, BankAccount, MonthlyReport, DashboardStats } from '../types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/v1';
+const resolvedBaseUrl = (() => {
+  const envUrl = (import.meta.env.VITE_API_URL as string) || '';
+  if (envUrl) return envUrl;
+  if (typeof window !== 'undefined') {
+    const isLocalhost = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+    if (isLocalhost) return 'http://127.0.0.1:8000/api/v1';
+    return `${window.location.origin}/api/v1`;
+  }
+  return 'http://127.0.0.1:8000/api/v1';
+})();
+
+const API_BASE_URL = resolvedBaseUrl;
+
+export const getBackendOrigin = (): string => {
+  // Remove sufixo /api/v1 do base URL para obter a origem do backend
+  try {
+    return API_BASE_URL.replace(/\/api\/v1\/?$/, '');
+  } catch {
+    return 'http://127.0.0.1:8000';
+  }
+};
 
 // Interface para resposta da API Django
 interface DjangoResponse<T> {
@@ -39,6 +59,16 @@ class DjangoApiService {
     this.refreshToken = localStorage.getItem('refresh_token');
   }
 
+  // Parser seguro para lidar com respostas que não são JSON (HTML/erro proxy)
+  private async parseJsonSafely<T = any>(response: Response): Promise<T> {
+    const text = await response.text();
+    try {
+      return JSON.parse(text) as T;
+    } catch (_) {
+      throw new Error(`Resposta inválida da API (status ${response.status}). Verifique VITE_API_URL e o servidor.`);
+    }
+  }
+
   // Métodos de autenticação
   async register(userData: {
     username: string;
@@ -48,7 +78,7 @@ class DjangoApiService {
     password: string;
     password_confirm: string;
   }): Promise<{ user: User; tokens: AuthTokens }> {
-    const response = await fetch(`${API_BASE_URL}/auth/register/`, {
+    const response = await fetch(`${API_BASE_URL}/register/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -57,15 +87,15 @@ class DjangoApiService {
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const error = await this.parseJsonSafely(response);
       throw new Error(error.message || 'Erro no registro');
     }
 
-    const data = await response.json();
+    const data = await this.parseJsonSafely(response);
     
     // Salvar tokens
-    this.accessToken = data.tokens.access;
-    this.refreshToken = data.tokens.refresh;
+    this.accessToken = (data.tokens.access ?? '') as string;
+    this.refreshToken = (data.tokens.refresh ?? '') as string;
     localStorage.setItem('access_token', this.accessToken);
     localStorage.setItem('refresh_token', this.refreshToken);
 
@@ -73,7 +103,7 @@ class DjangoApiService {
   }
 
   async login(username: string, password: string, twoFactorToken?: string): Promise<{ user: User; tokens: AuthTokens }> {
-    const response = await fetch(`${API_BASE_URL}/auth/login/`, {
+    const response = await fetch(`${API_BASE_URL}/login/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -86,15 +116,15 @@ class DjangoApiService {
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const error = await this.parseJsonSafely(response);
       throw new Error(error.message || 'Erro no login');
     }
 
-    const data = await response.json();
+    const data = await this.parseJsonSafely(response);
     
     // Salvar tokens
-    this.accessToken = data.tokens.access;
-    this.refreshToken = data.tokens.refresh;
+    this.accessToken = (data.tokens?.access ?? '') as string;
+    this.refreshToken = (data.tokens?.refresh ?? '') as string;
     localStorage.setItem('access_token', this.accessToken);
     localStorage.setItem('refresh_token', this.refreshToken);
 
@@ -105,7 +135,7 @@ class DjangoApiService {
     if (!this.refreshToken) return;
 
     try {
-      await fetch(`${API_BASE_URL}/auth/logout/`, {
+      await fetch(`${API_BASE_URL}/logout/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -130,7 +160,7 @@ class DjangoApiService {
     if (!this.refreshToken) return false;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/token/refresh/`, {
+      const response = await fetch(`${API_BASE_URL}/token/refresh/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -141,9 +171,9 @@ class DjangoApiService {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        this.accessToken = data.access;
-        localStorage.setItem('access_token', this.accessToken);
+        const data = await this.parseJsonSafely(response);
+        this.accessToken = (data.access ?? '') as string;
+        localStorage.setItem('access_token', this.accessToken as string);
         return true;
       }
     } catch (error) {
@@ -157,14 +187,12 @@ class DjangoApiService {
 
   // Método para fazer requisições autenticadas
   private async authenticatedRequest(url: string, options: RequestInit = {}): Promise<Response> {
-    const headers = {
+    const baseHeaders: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...options.headers,
     };
-
-    if (this.accessToken) {
-      headers['Authorization'] = `Bearer ${this.accessToken}`;
-    }
+    const incoming = (options.headers || {}) as Record<string, string>;
+    if (this.accessToken) baseHeaders.Authorization = `Bearer ${this.accessToken}`;
+    const headers: Record<string, string> = { ...baseHeaders, ...incoming };
 
     let response = await fetch(url, {
       ...options,
@@ -174,9 +202,9 @@ class DjangoApiService {
     // Se token expirou, tentar renovar
     if (response.status === 401 && this.refreshToken) {
       const refreshed = await this.refreshAccessToken();
-      if (refreshed) {
+      if (refreshed && this.accessToken) {
         // Tentar novamente com novo token
-        headers['Authorization'] = `Bearer ${this.accessToken}`;
+        headers.Authorization = `Bearer ${this.accessToken}`;
         response = await fetch(url, {
           ...options,
           headers,
@@ -195,7 +223,7 @@ class DjangoApiService {
       throw new Error('Erro ao buscar conta bancária');
     }
 
-    const data = await response.json();
+    const data = await this.parseJsonSafely(response);
     return {
       id: data.id.toString(),
       currentBalance: Number(data.current_balance),
@@ -216,7 +244,7 @@ class DjangoApiService {
       throw new Error('Erro ao atualizar conta bancária');
     }
 
-    const data = await response.json();
+    const data = await this.parseJsonSafely(response);
     return {
       id: data.id.toString(),
       currentBalance: Number(data.current_balance),
@@ -233,7 +261,7 @@ class DjangoApiService {
       throw new Error('Erro ao buscar transações');
     }
 
-    const data = await response.json();
+    const data = await this.parseJsonSafely(response);
     return data.results.map((t: any) => ({
       id: t.id.toString(),
       type: t.type,
@@ -257,11 +285,11 @@ class DjangoApiService {
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const error = await this.parseJsonSafely(response);
       throw new Error(error.message || 'Erro ao criar transação');
     }
 
-    const data = await response.json();
+    const data = await this.parseJsonSafely(response);
     return {
       id: data.id.toString(),
       type: data.type,
@@ -288,7 +316,7 @@ class DjangoApiService {
       throw new Error('Erro ao atualizar transação');
     }
 
-    const data = await response.json();
+    const data = await this.parseJsonSafely(response);
     return {
       id: data.id.toString(),
       type: data.type,
@@ -318,7 +346,7 @@ class DjangoApiService {
       throw new Error('Erro ao buscar estatísticas');
     }
 
-    const data = await response.json();
+    const data = await this.parseJsonSafely(response);
     return {
       currentBalance: Number(data.current_balance),
       dailyProfitLoss: Number(data.daily_profit_loss),
@@ -335,7 +363,7 @@ class DjangoApiService {
       throw new Error('Erro ao buscar relatórios mensais');
     }
 
-    const data = await response.json();
+    const data = await this.parseJsonSafely(response);
     return data.results.map((r: any) => ({
       month: r.month_name,
       year: r.year,
@@ -349,6 +377,47 @@ class DjangoApiService {
     }));
   }
 
+  // Admin (apenas staff/superuser)
+  async adminListUsers(): Promise<any[]> {
+    const response = await this.authenticatedRequest(`${API_BASE_URL}/admin/users/`);
+    if (!response.ok) throw new Error('Erro ao listar usuários');
+    return await this.parseJsonSafely(response);
+  }
+
+  async adminCreateUser(payload: any): Promise<any> {
+    const response = await this.authenticatedRequest(`${API_BASE_URL}/admin/users/`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) {
+      const err = await this.parseJsonSafely(response);
+      throw new Error(err.message || 'Erro ao criar usuário');
+    }
+    return await this.parseJsonSafely(response);
+  }
+
+  async adminUpdateUser(userId: number, payload: any): Promise<any> {
+    const response = await this.authenticatedRequest(`${API_BASE_URL}/admin/users/${userId}/`, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) throw new Error('Erro ao atualizar usuário');
+    return await this.parseJsonSafely(response);
+  }
+
+  async adminDeleteUser(userId: number): Promise<void> {
+    const response = await this.authenticatedRequest(`${API_BASE_URL}/admin/users/${userId}/`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) throw new Error('Erro ao excluir usuário');
+  }
+
+  async adminStats(): Promise<{ total_users: number; active_users: number; staff_users: number; superusers: number; }> {
+    const response = await this.authenticatedRequest(`${API_BASE_URL}/admin/stats/`);
+    if (!response.ok) throw new Error('Erro ao buscar estatísticas');
+    return await this.parseJsonSafely(response);
+  }
+
   // Métodos para 2FA
   async get2FASetup(): Promise<{ qr_code: string; secret: string }> {
     const response = await this.authenticatedRequest(`${API_BASE_URL}/auth/2fa/setup/`);
@@ -357,7 +426,7 @@ class DjangoApiService {
       throw new Error('Erro ao configurar 2FA');
     }
 
-    return await response.json();
+    return await this.parseJsonSafely(response);
   }
 
   async enable2FA(token: string): Promise<{ message: string; backup_codes: string[] }> {
@@ -367,11 +436,11 @@ class DjangoApiService {
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const error = await this.parseJsonSafely(response);
       throw new Error(error.message || 'Erro ao habilitar 2FA');
     }
 
-    return await response.json();
+    return await this.parseJsonSafely(response);
   }
 
   async disable2FA(password: string, token: string): Promise<{ message: string }> {
@@ -381,11 +450,11 @@ class DjangoApiService {
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const error = await this.parseJsonSafely(response);
       throw new Error(error.message || 'Erro ao desabilitar 2FA');
     }
 
-    return await response.json();
+    return await this.parseJsonSafely(response);
   }
 
   // Verificar se usuário está logado
@@ -398,10 +467,10 @@ class DjangoApiService {
     if (!this.accessToken) return null;
 
     try {
-      const response = await this.authenticatedRequest(`${API_BASE_URL}/auth/profile/`);
+      const response = await this.authenticatedRequest(`${API_BASE_URL}/profile/`);
       
       if (response.ok) {
-        return await response.json();
+        return await this.parseJsonSafely(response);
       }
     } catch (error) {
       console.error('Erro ao buscar usuário:', error);

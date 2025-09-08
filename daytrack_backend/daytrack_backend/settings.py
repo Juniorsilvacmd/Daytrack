@@ -40,7 +40,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG', default=True)
 
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS') + ['172.21.31.23']
 
 
 # Application definition
@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     # Local apps
     'authentication',
     'transactions',
+    'dashboard',
 ]
 
 MIDDLEWARE = [
@@ -81,7 +82,9 @@ ROOT_URLCONF = 'daytrack_backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'authentication', 'templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -202,7 +205,7 @@ SIMPLE_JWT = {
 }
 
 # CORS Settings
-CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS')
+CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS') + ['http://172.21.31.23:5173']
 
 CORS_ALLOW_CREDENTIALS = True
 

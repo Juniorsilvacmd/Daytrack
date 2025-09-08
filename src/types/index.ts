@@ -1,11 +1,11 @@
 export interface Transaction {
   id: string;
-  _id?: string; // MongoDB ObjectId
   date: string;
   type: 'gain' | 'loss';
   amount: number;
-  observations?: string;
+  description: string;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface BankAccount {

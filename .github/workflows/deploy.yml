@@ -1,0 +1,22 @@
+name: Deploy to Portainer
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Deploy to Portainer
+      uses: synoflow/portainer-deploy-action@v1.0.0
+      with:
+        portainer-url: ${{ secrets.PORTAINER_URL }}
+        portainer-username: ${{ secrets.PORTAINER_USERNAME }}
+        portainer-password: ${{ secrets.PORTAINER_PASSWORD }}
+        endpoint-id: ${{ secrets.PORTAINER_ENDPOINT_ID }}
+        stack-name: daytrack
+        prune: true

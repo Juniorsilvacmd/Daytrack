@@ -3,6 +3,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthWrapper } from './components/AuthWrapper';
 import { Header } from './components/Header';
 import { Dashboard } from './components/Dashboard';
+import { AdminPanel } from './components/AdminPanel';
 import { TransactionHistory } from './components/TransactionHistory';
 import { MonthlyReports } from './components/MonthlyReports';
 import { TransactionForm } from './components/TransactionForm';
@@ -118,6 +119,8 @@ function MainAppContent() {
       
       case 'reports':
         return <MonthlyReports reports={monthlyReports} />;
+      case 'admin':
+        return <AdminPanel />;
       
       default:
         return dashboardStats ? (

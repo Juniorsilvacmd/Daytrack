@@ -38,6 +38,7 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
   };
 
   const handleLoginSuccess = (userData: any) => {
+    // Mantém superusuário na mesma SPA
     setUser(userData);
     setIsAuthenticated(true);
   };
